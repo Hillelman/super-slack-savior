@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
-const BOT_TOKEN = "xoxb-2394725915505-5874304485285-KAYVBuaRpfZhhVnHVbnDQEoJ";
 const CHANNEL_ID = "C05SEUQ1532";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -16,7 +15,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${BOT_TOKEN}`,
+          Authorization: `Bearer ${process.env.BOT_TOKEN}`,
         },
         body: JSON.stringify({
           channel: CHANNEL_ID,
