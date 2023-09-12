@@ -30,18 +30,21 @@ async function fetchData(query: string) {
     console.error('Error fetching data:', error);
   }
 }
-
+let stopRequest = false;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).send("Hello, world!");
-
+  // res.status(200).send("Hello, world!");
+  if(stopRequest) {
+    return
+  }
   try {
     const { event } = req.body;
 
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
+        stopRequest = true;
         const text = await fetchData(event.text);
-
+      stopRequest = false;
         if (!text) {
           res.status(200).json({ message: "No message to send" });
           return;
