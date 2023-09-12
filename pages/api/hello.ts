@@ -6,10 +6,6 @@ import fetch from "node-fetch";
 const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 const CHANNEL_ID = "C05SEUQ1532";
 
-interface MyData {
-  text: string;
-}
-
 interface MyDataYoguev {
   response: string;
 }
@@ -20,11 +16,11 @@ async function fetcher(query: string) {
     body: JSON.stringify({query}),
     headers: {'Content-Type': 'application/json'}
   });
-  const data: MyData = await response.json() as MyData;
+  const data: MyDataYoguev = await response.json() as MyDataYoguev;
 
   console.log(data);
 
-  return data.text;
+  return data.response;
 }
 
 async function fetcherYoguev(query: string) {
