@@ -11,7 +11,7 @@ interface MyData {
 }
 
 async function fetcher(query: string) {
-  const response = await fetch('https://slack-savior.staging-service.newrelic.com/query', {
+  const response = await fetch('https://ee6f-199-203-191-86.ngrok-free.app/query', {
     method: 'post',
     body: JSON.stringify({query}),
     headers: {'Content-Type': 'application/json'}
