@@ -6,17 +6,21 @@ import fetch from "node-fetch";
 const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 const CHANNEL_ID = "C05SEUQ1532";
 
+interface MyData {
+  text: string;
+}
+
 async function fetcher(query: string) {
-  const response = await fetch('https://ee6f-199-203-191-86.ngrok-free.app/query', {
+  const response = await fetch('https://slack-savior.staging-service.newrelic.com/query', {
     method: 'post',
     body: JSON.stringify({query}),
     headers: {'Content-Type': 'application/json'}
   });
-  const data = await response.json();
+  const data: MyData = await response.json() as MyData;
 
   console.log(data);
 
-  return data;
+  return data.text;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
