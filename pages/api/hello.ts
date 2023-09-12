@@ -24,7 +24,7 @@ async function fetchData(query: string) {
   try {
     const response = await fetch(url, requestOptions);
     const data = await response.json();
-    console.log(data);
+    console.log('Data fetched:', data);
     return data;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -58,8 +58,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (response.ok) {
+          console.log("Message sent successfully:", text);
           res.status(200).json({ message: "Message sent successfully" });
         } else {
+          console.log("Failed to send message to Slack");
           res.status(500).json({ message: "Failed to send message to Slack" });
         }
         break;
