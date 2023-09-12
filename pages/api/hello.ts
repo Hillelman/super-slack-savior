@@ -10,51 +10,43 @@ interface MyDataYoguev {
   response: string;
 }
 
-async function fetcher(query: string) {
-  const response = await fetch('https://ee6f-199-203-191-86.ngrok-free.app/query', {
-    method: 'post',
-    body: JSON.stringify({query}),
-    headers: {'Content-Type': 'application/json'}
-  });
-  const data: MyDataYoguev = await response.json() as MyDataYoguev;
+async function fetcher(q: string) {
+  const cleanQuery = q.replace("<@U05RQ8YE98D>", "").trim();
+  console.log(cleanQuery);
 
-  console.log(data);
+  const response = await fetch(
+    "https://slack-savior.staging-service.newrelic.com/query",
+    {
+      method: "post",
+      body: JSON.stringify({ query: cleanQuery }),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  const data: MyDataYoguev = (await response.json()) as MyDataYoguev;
 
-  return data.response;
-}
-
-async function fetcherYoguev(query: string) {
-  const response = await fetch('https://slack-savior.staging-service.newrelic.com/query', {
-    method: 'post',
-    body: JSON.stringify({query}),
-    headers: {'Content-Type': 'application/json'}
-  });
-  const data: MyDataYoguev = await response.json() as MyDataYoguev;
-
-  console.log(data);
+  console.log(response);
 
   return data.response;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     const { event } = req.body;
-
-    console.log('Before switch');
+    res.status(200).json({});
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
-        console.log('app_mention');
+        await Loader(event);
         const text = await fetcher(event.text);
-        console.log('after fetchData: ', text);
+        console.log("after fetchData: ", text);
 
         if (!text) {
-          console.log('text is bad');
           res.status(200).json({ message: "No message to send" });
           return;
         }
-
-        console.log('text is good');
 
         const response = await fetch(SLACK_POST_MESSAGE_URL, {
           method: "POST",
@@ -63,12 +55,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             Authorization: `Bearer ${process.env.BOT_TOKEN}`,
           },
           body: JSON.stringify({
-            channel: event.channel,
+            channel: CHANNEL_ID,
             thread_ts: event.ts,
             text,
           }),
         });
-        console.log('after slack post message: ', response);
+        console.log("after slack post message: ", response);
 
         if (response.ok) {
           console.log("Message sent successfully:", text);
@@ -79,10 +71,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         break;
       default:
-        res.status(200).json({ challenge: req.body.challenge || ":(" });
+        console.log("Unhandled event type:", event.type);
+        res.status(200).json({ message: "Unhandled event type" });
+        break;
     }
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
+}
+
+async function Loader(event: any) {
+  await fetch(SLACK_POST_MESSAGE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.BOT_TOKEN}`,
+    },
+    body: JSON.stringify({
+      channel: event.channel,
+      thread_ts: event.ts,
+      text: "Checking, please wait a moment...",
+    }),
+  });
 }
