@@ -10,7 +10,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json({ challenge: req.body.challenge || ":(" });
   let response_text = "I don't understand that command. Try again?";
   const { event } = req.body;
-  console.log("Event: " + event);
+  console.log("Event: " + JSON.stringify(event));
   console.log("Token: " + process.env.BOT_TOKEN);
 
   switch (event.type) {
