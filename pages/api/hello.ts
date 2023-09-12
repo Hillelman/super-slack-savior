@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
-        const text = fetchData(event.type.text);
+        const text = fetchData(event.text);
 
         if (!text) {
           res.status(200).json({ message: "No message to send" });
