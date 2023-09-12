@@ -10,6 +10,10 @@ interface MyData {
   text: string;
 }
 
+interface MyDataYoguev {
+  response: string;
+}
+
 async function fetcher(query: string) {
   const response = await fetch('https://ee6f-199-203-191-86.ngrok-free.app/query', {
     method: 'post',
@@ -23,6 +27,19 @@ async function fetcher(query: string) {
   return data.text;
 }
 
+async function fetcherYoguev(query: string) {
+  const response = await fetch('https://slack-savior.staging-service.newrelic.com/query', {
+    method: 'post',
+    body: JSON.stringify({query}),
+    headers: {'Content-Type': 'application/json'}
+  });
+  const data: MyDataYoguev = await response.json() as MyDataYoguev;
+
+  console.log(data);
+
+  return data.response;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { event } = req.body;
@@ -32,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
         console.log('app_mention');
-        const text = await fetcher(event.text);
+        const text = await fetcherYoguev(event.text);
         console.log('after fetchData: ', text);
 
         if (!text) {
