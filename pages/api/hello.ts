@@ -7,7 +7,7 @@ const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 const CHANNEL_ID = "C05SEUQ1532";
 
 async function fetchData(query: string) {
-  const url = 'https://ee6f-199-203-191-86.ngrok-free.app/query';
+  // const url = 'https://ee6f-199-203-191-86.ngrok-free.app/query';
   const headers = new Headers();
   headers.append('accept', 'application/json');
   headers.append('Content-Type', 'application/json');
@@ -21,11 +21,15 @@ async function fetchData(query: string) {
     body,
     redirect: 'follow'
   };
-  
-  fetch("https://ee6f-199-203-191-86.ngrok-free.app/query", requestOptions)
+
+  let responseData = "";
+  //@ts-ignore
+  await fetch("https://ee6f-199-203-191-86.ngrok-free.app/query", requestOptions)
     .then(response => response.text())
-    .then(result => console.log(result))
+    .then(result => responseData = result)
     .catch(error => console.log('error', error));
+
+    return responseData;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
