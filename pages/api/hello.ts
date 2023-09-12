@@ -15,28 +15,21 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (type) {
     // Message events that mention the bot (e. @savior)
     case "app_mention":
+      fetch(SLACK_POST_MESSAGE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.BOT_TOKEN}`,
+        },
+        body: JSON.stringify({
+          channel: CHANNEL_ID,
+          text: response_text
+        }),
+      });
     break;
 
     // Any A message that was posted to the channel
     case "message":
-      if (text.includes("Who's there?")) {
-          response_text = "A bot user";
-      }
-      if (text.includes("Bot user who?")) {
-          response_text = "No, I'm a bot user. I don't understand jokes.";
-      }
     break;
   }
-
-  fetch(SLACK_POST_MESSAGE_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.BOT_TOKEN}`,
-    },
-    body: JSON.stringify({
-      channel: CHANNEL_ID,
-      text: response_text
-    }),
-  });
 }
