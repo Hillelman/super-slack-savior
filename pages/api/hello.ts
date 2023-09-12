@@ -32,6 +32,8 @@ async function fetchData(query: string) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.status(200);
+
   try {
     const { event } = req.body;
 
