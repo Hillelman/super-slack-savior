@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       case "app_mention":
         stopRequest = true;
         const text = await fetchData(event.text);
-      stopRequest = false;
+        stopRequest = false;
         if (!text) {
           res.status(200).json({ message: "No message to send" });
           return;
