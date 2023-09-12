@@ -27,25 +27,23 @@ async function fetchData(query: string) {
     console.log('Data fetched:', data);
     return data;
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.log('Error fetching data:', error);
   }
 }
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // res.status(200).send("Hello, world!");
 
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { event } = req.body;
 
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
-       
         const text = await fetchData(event.text);
-        
-        // if (!text) {
-        //   res.status(200).json({ message: "No message to send" });
-        //   return;
-        // }
+
+        if (!text) {
+          res.status(200).json({ message: "No message to send" });
+          return;
+        }
 
         const response = await fetch(SLACK_POST_MESSAGE_URL, {
           method: "POST",
