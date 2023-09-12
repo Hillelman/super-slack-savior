@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
         console.log('app_mention');
-        const text = await fetcherYoguev(event.text);
+        const text = await fetcher(event.text);
         console.log('after fetchData: ', text);
 
         if (!text) {
@@ -67,7 +67,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             Authorization: `Bearer ${process.env.BOT_TOKEN}`,
           },
           body: JSON.stringify({
-            channel: CHANNEL_ID,
+            channel: event.channel,
+            thread_ts: event.ts,
             text,
           }),
         });
