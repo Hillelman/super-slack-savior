@@ -35,7 +35,8 @@ export default async function handler(
 ) {
   try {
     const { event } = req.body;
-    res.status(200).json({});
+    res.status(200).json({"challenge": req.body.challenge || ":(" })
+
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
