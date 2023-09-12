@@ -6,14 +6,44 @@ import type { NextApiRequest, NextApiResponse } from "next";
 const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 const CHANNEL_ID = "C05SEUQ1532";
 
+async function fetchData(query: string): Promise<void> {
+  const url = 'https://ee6f-199-203-191-86.ngrok-free.app/query';
+  const headers = new Headers();
+  headers.append('accept', 'application/json');
+  headers.append('Content-Type', 'application/json');
+
+  const body = JSON.stringify({ query });
+
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers,
+    body,
+  };
+
+  try {
+    const response = await fetch(url, requestOptions);
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
 export default async function bhandler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { event } = req.body;
-    let response_text = "I don't understand that command. Try again?";
 
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
+        const text = fetchData(event.type.text);
+
+        if (!text) {
+          res.status(200).json({ message: "No message to send" });
+          return;
+        }
+
         const response = await fetch(SLACK_POST_MESSAGE_URL, {
           method: "POST",
           headers: {
@@ -22,7 +52,7 @@ export default async function bhandler(req: NextApiRequest, res: NextApiResponse
           },
           body: JSON.stringify({
             channel: CHANNEL_ID,
-            text: response_text,
+            text,
           }),
         });
 
