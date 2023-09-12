@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
+import fetch from "node-fetch";
 /**
  * Slack API documentation: https://api.slack.com/bot-users
  */
@@ -7,29 +7,41 @@ const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 const CHANNEL_ID = "C05SEUQ1532";
 
 async function fetchData(query: string) {
-  // const url = 'https://ee6f-199-203-191-86.ngrok-free.app/query';
-  const headers = new Headers();
-  headers.append('accept', 'application/json');
-  headers.append('Content-Type', 'application/json');
 
-  const body = JSON.stringify({ query });
-  console.log('Body:', body)
+const response = await fetch('https://ee6f-199-203-191-86.ngrok-free.app/query', {
+	method: 'post',
+	body: JSON.stringify({query}),
+	headers: {'Content-Type': 'application/json'}
+});
+const data = await response.json();
 
-  var requestOptions = {
-    method: 'POST',
-    headers,
-    body,
-    redirect: 'follow'
-  };
+console.log(data);
 
-  let responseData = "";
-  //@ts-ignore
-  await fetch("https://ee6f-199-203-191-86.ngrok-free.app/query", requestOptions)
-    .then(response => response.text())
-    .then(result => responseData = result)
-    .catch(error => console.log('error', error));
+return data;
 
-    return responseData;
+  // // const url = 'https://ee6f-199-203-191-86.ngrok-free.app/query';
+  // const headers = new Headers();
+  // headers.append('accept', 'application/json');
+  // headers.append('Content-Type', 'application/json');
+
+  // const body = JSON.stringify({ query });
+  // console.log('Body:', body)
+
+  // var requestOptions = {
+  //   method: 'POST',
+  //   headers,
+  //   body,
+  //   redirect: 'follow'
+  // };
+
+  // let responseData = "";
+  // //@ts-ignore
+  // await fetch("https://ee6f-199-203-191-86.ngrok-free.app/query", requestOptions)
+  //   .then(response => response.text())
+  //   .then(result => responseData = result)
+  //   .catch(error => console.log('error', error));
+
+  //   return responseData;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
