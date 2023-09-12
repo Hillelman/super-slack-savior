@@ -13,6 +13,7 @@ async function fetchData(query: string): Promise<void> {
   headers.append('Content-Type', 'application/json');
 
   const body = JSON.stringify({ query });
+  console.log('Body:', body)
 
   const requestOptions: RequestInit = {
     method: 'POST',
@@ -30,7 +31,7 @@ async function fetchData(query: string): Promise<void> {
   }
 }
 
-export default async function bhandler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { event } = req.body;
 
