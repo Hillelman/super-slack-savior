@@ -6,7 +6,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 const CHANNEL_ID = "C05SEUQ1532";
 
-async function fetchData(query: string): Promise<void> {
+async function fetchData(query: string) {
   const url = 'https://ee6f-199-203-191-86.ngrok-free.app/query';
   const headers = new Headers();
   headers.append('accept', 'application/json');
@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
-        const text = fetchData(event.text);
+        const text = await fetchData(event.text);
 
         if (!text) {
           res.status(200).json({ message: "No message to send" });
