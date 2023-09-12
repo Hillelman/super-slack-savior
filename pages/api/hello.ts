@@ -22,15 +22,14 @@ async function fetchData(query: string) {
   };
 
   console.log('before try');
-  try {
-    const response = await fetch(url, requestOptions);
-    console.log('after fetch');
-    const data = await response.json();
-    console.log('Data fetched:', data);
-    return data;
-  } catch (error) {
-    console.log('Error fetching data:', error);
-  }
+  const response = await fetch(url, requestOptions);
+  console.log('after fetch');
+  const data = await response.json();
+  console.log('Data fetched:', data);
+  return data;
+  // } catch (error) {
+  //   console.log('Error fetching data:', error);
+  // }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
