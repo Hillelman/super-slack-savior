@@ -15,21 +15,17 @@ async function fetchData(query: string) {
   const body = JSON.stringify({ query });
   console.log('Body:', body)
 
-  const requestOptions: RequestInit = {
+  var requestOptions = {
     method: 'POST',
     headers,
     body,
+    redirect: 'follow'
   };
-
-  console.log('before try');
-  const response = await fetch(url, requestOptions);
-  console.log('after fetch');
-  const data = await response.json();
-  console.log('Data fetched:', data);
-  return data;
-  // } catch (error) {
-  //   console.log('Error fetching data:', error);
-  // }
+  
+  fetch("https://ee6f-199-203-191-86.ngrok-free.app/query", requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
