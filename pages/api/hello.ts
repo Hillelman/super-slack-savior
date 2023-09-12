@@ -5,12 +5,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
  */
 const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 const CHANNEL_ID = "C05SEUQ1532";
-let response_text = "I don't understand that command. Try again?";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json({ challenge: req.body.challenge || ":(" });
+  let response_text = "I don't understand that command. Try again?";
   const { event } = req.body;
-  console.log("Message content: " + event.text);
+  console.log("Event: " + event);
+  console.log("Token: " + process.env.BOT_TOKEN);
 
   switch (event.type) {
     // Message events that mention the bot (e. @savior)
