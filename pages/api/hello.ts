@@ -6,42 +6,17 @@ import fetch from "node-fetch";
 const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 const CHANNEL_ID = "C05SEUQ1532";
 
-async function fetchData(query: string) {
+async function fetcher(query: string) {
+  const response = await fetch('https://ee6f-199-203-191-86.ngrok-free.app/query', {
+    method: 'post',
+    body: JSON.stringify({query}),
+    headers: {'Content-Type': 'application/json'}
+  });
+  const data = await response.json();
 
-const response = await fetch('https://ee6f-199-203-191-86.ngrok-free.app/query', {
-	method: 'post',
-	body: JSON.stringify({query}),
-	headers: {'Content-Type': 'application/json'}
-});
-const data = await response.json();
+  console.log(data);
 
-console.log(data);
-
-return data;
-
-  // // const url = 'https://ee6f-199-203-191-86.ngrok-free.app/query';
-  // const headers = new Headers();
-  // headers.append('accept', 'application/json');
-  // headers.append('Content-Type', 'application/json');
-
-  // const body = JSON.stringify({ query });
-  // console.log('Body:', body)
-
-  // var requestOptions = {
-  //   method: 'POST',
-  //   headers,
-  //   body,
-  //   redirect: 'follow'
-  // };
-
-  // let responseData = "";
-  // //@ts-ignore
-  // await fetch("https://ee6f-199-203-191-86.ngrok-free.app/query", requestOptions)
-  //   .then(response => response.text())
-  //   .then(result => responseData = result)
-  //   .catch(error => console.log('error', error));
-
-  //   return responseData;
+  return data;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -53,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
         console.log('app_mention');
-        const text = await fetchData(event.text);
+        const text = await fetcher(event.text);
         console.log('after fetchData: ', text);
 
         if (!text) {
