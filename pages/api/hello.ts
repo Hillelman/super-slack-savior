@@ -21,8 +21,10 @@ async function fetchData(query: string) {
     body,
   };
 
+  console.log('before try');
   try {
     const response = await fetch(url, requestOptions);
+    console.log('after fetch');
     const data = await response.json();
     console.log('Data fetched:', data);
     return data;
@@ -35,15 +37,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { event } = req.body;
 
+    console.log('Before switch');
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
+        console.log('app_mention');
         const text = await fetchData(event.text);
+        console.log('after fetchData: ', text);
 
         if (!text) {
+          console.log('text is bad');
           res.status(200).json({ message: "No message to send" });
           return;
         }
+
+        console.log('text is good');
 
         const response = await fetch(SLACK_POST_MESSAGE_URL, {
           method: "POST",
@@ -56,6 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             text,
           }),
         });
+        console.log('after slack post message: ', response);
 
         if (response.ok) {
           console.log("Message sent successfully:", text);
