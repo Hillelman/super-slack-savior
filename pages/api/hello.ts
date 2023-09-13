@@ -5,6 +5,7 @@ import fetch from "node-fetch";
  */
 const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
 const SLACK_UPDATE_URL = "https://slack.com/api/chat.update";
+const SLACK_REACTIONS_ADD_URL = "https://slack.com/api/reactions.add";
 // const CHANNEL_ID = "C05SEUQ1532";
 
 interface MyDataYoguev {
@@ -20,7 +21,10 @@ async function fetcher(q: string) {
     {
       method: "post",
       body: JSON.stringify({ query: cleanQuery }),
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": "NRAK-CT2CEMF45QEOFDYYTACJI94YNPB",
+      },
     }
   );
   const data: MyDataYoguev = (await response.json()) as MyDataYoguev;
@@ -36,7 +40,7 @@ export default async function handler(
 ) {
   try {
     const { event } = req.body;
-    res.status(200).json({"challenge": req.body.challenge || ":(" })
+    res.status(200).json({ challenge: req.body.challenge || ":(" });
 
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
@@ -50,7 +54,7 @@ export default async function handler(
           return;
         }
 
-        const response = await fetch(SLACK_UPDATE_URL, {
+        const response = await fetch(SLACK_POST_MESSAGE_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -59,11 +63,24 @@ export default async function handler(
           body: JSON.stringify({
             channel: event.channel,
             thread_ts: event.ts,
-            ts,
+            // ts,
             text,
           }),
         });
         console.log("after slack post message: ", response);
+
+        await fetch(SLACK_REACTIONS_ADD_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.BOT_TOKEN}`,
+          },
+          body: JSON.stringify({
+            channel: event.channel,
+            timestamp: event.ts,
+            name: "white_check_mark",
+          }),
+        });
 
         if (response.ok) {
           console.log("Message sent successfully:", text);
@@ -85,6 +102,18 @@ export default async function handler(
 }
 
 async function Loader(event: any) {
+  await fetch(SLACK_REACTIONS_ADD_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.BOT_TOKEN}`,
+    },
+    body: JSON.stringify({
+      channel: event.channel,
+      timestamp: event.ts,
+      name: "eyes",
+    }),
+  });
   const response = await fetch(SLACK_POST_MESSAGE_URL, {
     method: "POST",
     headers: {
@@ -97,5 +126,5 @@ async function Loader(event: any) {
       text: `Hiyush <@${event.user}>, I'm checking this for you, :hourglass: please give me a sec... or maybe two :stuck_out_tongue_winking_eye:`,
     }),
   });
-  return (await response.json() as any).ts;
+  return ((await response.json()) as any).ts;
 }
