@@ -4,7 +4,8 @@ import fetch from "node-fetch";
  * Slack API documentation: https://api.slack.com/bot-users
  */
 const SLACK_POST_MESSAGE_URL = "https://slack.com/api/chat.postMessage";
-const CHANNEL_ID = "C05SEUQ1532";
+const SLACK_UPDATE_URL = "https://slack.com/api/chat.update";
+// const CHANNEL_ID = "C05SEUQ1532";
 
 interface MyDataYoguev {
   response: string;
@@ -40,7 +41,7 @@ export default async function handler(
     switch (event.type) {
       // Message events that mention the bot (e.g., @savior)
       case "app_mention":
-        await Loader(event);
+        const ts = await Loader(event);
         const text = await fetcher(event.text);
         console.log("after fetchData: ", text);
 
@@ -49,15 +50,16 @@ export default async function handler(
           return;
         }
 
-        const response = await fetch(SLACK_POST_MESSAGE_URL, {
+        const response = await fetch(SLACK_UPDATE_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${process.env.BOT_TOKEN}`,
           },
           body: JSON.stringify({
-            channel: CHANNEL_ID,
+            channel: event.channel,
             thread_ts: event.ts,
+            ts,
             text,
           }),
         });
@@ -83,7 +85,7 @@ export default async function handler(
 }
 
 async function Loader(event: any) {
-  await fetch(SLACK_POST_MESSAGE_URL, {
+  const response = await fetch(SLACK_POST_MESSAGE_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -92,7 +94,8 @@ async function Loader(event: any) {
     body: JSON.stringify({
       channel: event.channel,
       thread_ts: event.ts,
-      text: "Checking, please wait a moment...",
+      text: `Hiyush <@${event.user}>, I'm checking this for you, :hourglass: please give me a sec... or maybe two :stuck_out_tongue_winking_eye:`,
     }),
   });
+  return (await response.json() as any).ts;
 }
